@@ -18,43 +18,54 @@ namespace IPTV_Qality_Prediction
             InitializeComponent();
         }
 
+        private Algorithm algorithmObj;
+
         private void AnalyzDataFileOpen_button_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            string path;
 
-            openFileDialog.InitialDirectory = "C:\\";
-            openFileDialog.RestoreDirectory = true;
-
-            if(openFileDialog.ShowDialog() == DialogResult.OK)
+            OpenFileDialog openFileDialog = new OpenFileDialog
             {
-                string path = openFileDialog.FileName;            
+                RestoreDirectory = true
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                path = openFileDialog.FileName;
+                algorithmObj = new Algorithm(WorkWithLearningData.ReadFromFile(path));
             }
         }
 
         private void Analyze_button_Click(object sender, EventArgs e)
         {
-            if(!Double.TryParse(Delay_textBox.Text, out delay) || !Double.TryParse(Jitter_textBox.Text, out jitter) || !Double.TryParse(Drops_textBox.Text, out drops))
+            if (algorithmObj != null)
             {
-                MessageBox.Show("Incorrect input! \nEnter positive numbers","ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if (!Double.TryParse(Delay_textBox.Text, out double delay) ||
+                    !Double.TryParse(Jitter_textBox.Text, out double jitter) ||
+                    !Double.TryParse(Drops_textBox.Text, out double drops))
+                {
+                    MessageBox.Show("Incorrect input!\nEnter positive integers", "ERROR", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                }
+                else
+                {
+                    algorithmObj.PolynomialRegressionLearning();
+                    algorithmObj.SupportVectorMachineLearning();
+                }
+
+                Delay_textBox.Clear();
+                Jitter_textBox.Clear();
+                Drops_textBox.Clear();
             }
-
-            Delay_textBox.Clear();
-            Jitter_textBox.Clear();
-            Drops_textBox.Clear();
+            else
+            {
+                MessageBox.Show("Please, choose file with learning data", "OOOPS!(", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+            }
         }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
 
         public WMPLib.WindowsMediaPlayer WMP = new WMPLib.WindowsMediaPlayer();
+
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             if (checkBox1.Checked == true)
@@ -63,8 +74,6 @@ namespace IPTV_Qality_Prediction
                 WMP.controls.play();
                 WMP.close();
             }
-
-
         }
     }
 }
