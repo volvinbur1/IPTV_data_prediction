@@ -1,8 +1,12 @@
-﻿using Accord.Statistics.Models.Regression.Linear;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace IPTV_Qality_Prediction
 {
-    public partial class Algorithm
+    public static partial class Algorithm
     {
         private double[][] LearningData;
         private double[] coefOfFunction;
