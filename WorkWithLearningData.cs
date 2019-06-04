@@ -5,7 +5,7 @@ namespace IPTV_Qality_Prediction
 {
     public static class WorkWithLearningData
     {
-        public static double[][] ReadFromFile(string path)
+        public static double[,] ReadFromFile(string path)
         {
             string[] lines = File.ReadAllLines(path);
             double[][] columns = new double[lines.Length - 1][];
