@@ -32,7 +32,11 @@ namespace IPTV_Qality_Prediction
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 path = openFileDialog.FileName;
+                UseWaitCursor = true;
                 algorithmObj = new Algorithm(WorkWithLearningData.ReadFromFile(path));
+                algorithmObj.PolynomialRegressionLearning();
+                algorithmObj.SupportVectorMachineLearning();
+                UseWaitCursor = false;
             }
         }
 
@@ -49,8 +53,10 @@ namespace IPTV_Qality_Prediction
                 }
                 else
                 {
-                    algorithmObj.PolynomialRegressionLearning();
-                    algorithmObj.SupportVectorMachineLearning();
+                    algorithmObj.Delay = delay;
+                    algorithmObj.Jitter = jitter;
+                    algorithmObj.Drops = drops;
+                    PolynomialRegression_label.Text = algorithmObj.PolynomialRegressionPediction().ToString();
                 }
 
                 Delay_textBox.Clear();

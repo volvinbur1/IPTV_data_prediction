@@ -1,51 +1,81 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using Accord.Statistics.Models.Regression.Linear;
 
 namespace IPTV_Qality_Prediction
 {
-    public static partial class Algorithm
+    public partial class Algorithm
     {
         private double[][] LearningData;
         private double[] coefOfFunction;
+        private double[][] coefOfFunctionEachVar = new double[3][];
+
+        public double Delay { get; set; }
+        public double Jitter { get; set; }
+        public double Drops { get; set; }
 
         public Algorithm(double[][] array)
         {
             LearningData = array;
         }
 
-        private void PRLearningOneIndVar(int degree, double[] independentVariables, double[] dependentVariables)
+        public int PolynomialRegressionPediction()
+        {
+            int qualityMark = 0;
+
+            int func(int i, double x)
+            {
+                double y = 0;
+                for (int j = 0; j <= coefOfFunctionEachVar.Length; j++)
+                    y += coefOfFunctionEachVar[i][j] * Math.Pow(x, j);
+
+                return (int)Math.Round(y);
+            }
+
+            qualityMark += func(0, Delay);
+            qualityMark += func(1, Jitter);
+            qualityMark += func(2, Drops);
+            return (int)Math.Round((double)(qualityMark/3));
+        }
+
+        private double[] PRLearning(int degree, double[][] independentVariables, double[][] dependentVariables)
         {
             PolynomialRegression objRegression =
                 PolynomialRegression.FromData(degree, independentVariables, dependentVariables);
 
-            coefOfFunction = new double[objRegression.Weights.Length + 1];
+            OrdinaryLeastSquares ols = new OrdinaryLeastSquares();
 
-            coefOfFunction[0] = objRegression.Intercept;
+            MultivariateLinearRegression regression = ols.Learn(independentVariables, dependentVariables);
+
+
+            double[] coef = new double[objRegression.Weights.Length + 1];
+
+            coef[0] = objRegression.Intercept;
 
             int index = objRegression.Weights.Length - 1;
 
             for (int i = 1; i <= objRegression.Weights.Length; i++)
             {
-                coefOfFunction[i] = objRegression.Weights[index];
+                coef[i] = objRegression.Weights[index];
                 index--;
             }
+            return coef;
         }
 
-        public void PolynomialRegressionLearning()//int colunmIndex)
+        public void PolynomialRegressionLearning()
         {
             int n = LearningData.Length;
             double[] dependentVariables = new double[n], independentVariables = new double[n];
 
-            for (int i = 0; i < n; i++)
-            {
-                dependentVariables[i] = LearningData[i][3];
-                independentVariables[i] = LearningData[i][2];
-            }
+            for (int j = 0; j < n; j++)
+                dependentVariables[j] = LearningData[j][3];
 
-            PRLearningOneIndVar(3, independentVariables, dependentVariables);
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < n; j++)
+                    independentVariables[j] = LearningData[j][i];
+                coefOfFunctionEachVar[i] = PRLearning(3, independentVariables, dependentVariables);
+            }
         }
     }
 }
