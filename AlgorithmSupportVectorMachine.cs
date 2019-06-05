@@ -75,9 +75,9 @@ namespace IPTV_Qality_Prediction
                 output[i] = Convert.ToInt32(LearningData[i][3]);
 
                 input[i] = new double[3];
-                input[i][0] = LearningData[i][0];
-                input[i][1] = LearningData[i][1];
-                input[i][2] = LearningData[i][2];
+                input[i][0] = NormalizedInputData[i][0];
+                input[i][1] = NormalizedInputData[i][1];
+                input[i][2] = NormalizedInputData[i][2];
             }
 
 
