@@ -81,28 +81,57 @@ namespace IPTV_Qality_Prediction
             }
 
 
+
             SVMLearning(input, output);
         }
-       
 
 
-      
+
+
+        //private void SVMLearning(double[][] input, int[] output)
+        //{
+        //    var teacher = new MulticlassSupportVectorLearning<Linear>();
+        //    {
+        //        LinearDualCoordinateDescent Learner(object p) => new LinearDualCoordinateDescent()
+        //        {
+        //            Loss = Loss.L2
+        //        };
+        //    }
+
+        //    teacher.ParallelOptions.MaxDegreeOfParallelism = 1;
+        //    var machine = teacher.Learn(input, output);
+
+        //    int[] predicted = machine.Decide(input);
+
+        //    double error = new ZeroOneLoss(output).Loss(predicted);
+        //}
         private void SVMLearning(double[][] input, int[] output)
         {
-            var teacher = new MulticlassSupportVectorLearning<Linear>();
+            var teacher = new MulticlassSupportVectorLearning<Gaussian>()
             {
-                LinearDualCoordinateDescent Learner(object p) => new LinearDualCoordinateDescent()
+
+                Learner = (param) => new SequentialMinimalOptimization<Gaussian>()
                 {
-                    Loss = Loss.L2
-                };
-            }
+
+                    UseKernelEstimation = true
+                }
+            };
+
 
             teacher.ParallelOptions.MaxDegreeOfParallelism = 1;
+
             var machine = teacher.Learn(input, output);
+
 
             int[] predicted = machine.Decide(input);
 
+
+            double[] scores = machine.Score(input);
+
+
             double error = new ZeroOneLoss(output).Loss(predicted);
         }
+
+
     }
 }
