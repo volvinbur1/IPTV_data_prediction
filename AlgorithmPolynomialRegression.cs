@@ -1,51 +1,101 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data;
+using System.Reflection;
+using Accord.Math;
+using Accord.Math.Optimization.Losses;
+using Accord.Statistics.Models.Regression.Linear;
 
 namespace IPTV_Qality_Prediction
 {
-    public static partial class Algorithm
+    public partial class Algorithm
     {
         private double[][] LearningData;
-        private double[] coefOfFunction;
+        private double errorPR = 0;
+        private double delay;
+        private double jitter;
+        private double drops;
+
+        public double ErrorMLR { get; private set; } = 0;
+
+        public double ErrorPR
+        {
+            get { return errorPR / 3; }
+        }
 
         public Algorithm(double[][] array)
         {
             LearningData = array;
         }
 
-        private void PRLearningOneIndVar(int degree, double[] independentVariables, double[] dependentVariables)
+        private PolynomialRegression[] objRegression;
+        private MultipleLinearRegression multipleLinearRegressionObj;
+
+        public double PolynomialRegressionPediction()
         {
-            PolynomialRegression objRegression =
-                PolynomialRegression.FromData(degree, independentVariables, dependentVariables);
+            double prediction = Math.Abs(objRegression[0].Transform(delay));
+            prediction += Math.Abs(objRegression[1].Transform(jitter));
+            prediction += Math.Abs(objRegression[2].Transform(jitter));
+            return prediction / 3;
+        }
 
-            coefOfFunction = new double[objRegression.Weights.Length + 1];
+        public double MultipleLinearRegressionPrediction()
+        {
+            double[] input = new double[] {delay, jitter, drops};
+            double prediction = multipleLinearRegressionObj.Transform(input);
+            return prediction;
+        }
 
-            coefOfFunction[0] = objRegression.Intercept;
-
-            int index = objRegression.Weights.Length - 1;
-
-            for (int i = 1; i <= objRegression.Weights.Length; i++)
+        private PolynomialRegression PRLearning(double[] independentVariables, double[] dependentVariables)
+        {
+            var polyTeacher = new PolynomialLeastSquares()
             {
-                coefOfFunction[i] = objRegression.Weights[index];
-                index--;
+                Degree = 6
+            };
+
+            PolynomialRegression objRegressionLocal = polyTeacher.Learn(independentVariables, dependentVariables);
+
+            double[] prediction = objRegressionLocal.Transform(independentVariables);
+
+            errorPR += new SquareLoss(independentVariables).Loss(prediction);
+
+            return objRegressionLocal;
+        }
+
+        public void PolynomialRegressionLearning()
+        {
+            int n = LearningData.Length;
+            double[] dependentVariables = LearningData.GetColumn(3);
+            double[] independentVariables = new double[n];
+            objRegression = new PolynomialRegression[n];
+           
+            //InputDataNormalization();
+            for (int i = 0; i < 3; i++)
+            {
+                independentVariables = NormalizedInputData.GetColumn(i);
+                objRegression[i] = PRLearning(independentVariables, dependentVariables);
             }
         }
 
-        public void PolynomialRegressionLearning()//int colunmIndex)
+        public void MultipleLinearRegressionLearning()
         {
             int n = LearningData.Length;
-            double[] dependentVariables = new double[n], independentVariables = new double[n];
+            double[] dependentVariables = LearningData.GetColumn(3);
+            double[][] independentVariables = new double[n][];
 
-            for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                dependentVariables[j] = LearningData[j][3];
+
+            for (int j = 0; j < n; j++)
             {
-                dependentVariables[i] = LearningData[i][3];
-                independentVariables[i] = LearningData[i][2];
+                independentVariables[j] = new double[3];
+                independentVariables[j][0] = NormalizedInputData[j][0];
+                independentVariables[j][1] = NormalizedInputData[j][1];
+                independentVariables[j][2] = NormalizedInputData[j][2];
             }
 
-            PRLearningOneIndVar(3, independentVariables, dependentVariables);
+            multipleLinearRegressionObj = MultipleLinearRegression.FromData(independentVariables, dependentVariables);
+            double[] prediction = multipleLinearRegressionObj.Transform(independentVariables);
+            ErrorMLR = new SquareLoss(dependentVariables).Loss(prediction);
         }
     }
 }
