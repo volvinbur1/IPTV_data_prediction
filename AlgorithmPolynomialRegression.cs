@@ -21,7 +21,7 @@ namespace IPTV_Qality_Prediction
         {
             get { return errorPR / 3; }
         }
-
+      
         public Algorithm(double[][] array)
         {
             LearningData = array;
