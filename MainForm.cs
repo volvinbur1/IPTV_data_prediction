@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security;
 using System.Windows.Forms;
 
 namespace IPTV_Qality_Prediction
@@ -31,12 +25,45 @@ namespace IPTV_Qality_Prediction
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                path = openFileDialog.FileName;
-                UseWaitCursor = true;
-                algorithmObj = new Algorithm(WorkWithLearningData.ReadFromFile(path));
-                algorithmObj.PolynomialRegressionLearning();
-                algorithmObj.SupportVectorMachineLearning();
-                UseWaitCursor = false;
+                try
+                {
+                    path = openFileDialog.FileName;
+                    UseWaitCursor = true;
+                    algorithmObj = new Algorithm(WorkWithLearningData.ReadFromFile(path));
+
+                    algorithmObj.LearningDataNormalization();
+
+                    algorithmObj.PolynomialRegressionLearning();
+                    algorithmObj.MultipleLinearRegressionLearning();
+                    algorithmObj.SupportVectorMachineLearning();
+
+                    ErrorPR_lable.Text = $"{Math.Round(algorithmObj.ErrorPR, 3) * 100}%";
+                    ErrorSVM_lable.Text = $"{Math.Round(algorithmObj.ErrorSVM, 3) * 100}%";
+                    ErrorMLR_label.Text = $"{Math.Round(algorithmObj.ErrorMLR, 3) * 100}%";
+
+                    LearningInfo_label.Text = "Algorithm\nis\nlearned";
+                    LearningInfo_label.ForeColor = Color.Green;
+
+                    PredictionElem_groupBox.Enabled = true;
+                    AnalyzDataFileOpen_button.Enabled = false;
+
+                    UseWaitCursor = false;
+                }
+                catch (SecurityException)
+                {
+                    UseWaitCursor = false;
+                    MessageBox.Show("You have not enought permision");
+                }
+                catch (FormatException)
+                {
+                    UseWaitCursor = false;
+                    MessageBox.Show("Inappropriate learning data");
+                }
+                catch (Exception exception)
+                {
+                    UseWaitCursor = false;
+                    MessageBox.Show(exception.Message);
+                }
             }
         }
 
@@ -56,7 +83,13 @@ namespace IPTV_Qality_Prediction
                     algorithmObj.Delay = delay;
                     algorithmObj.Jitter = jitter;
                     algorithmObj.Drops = drops;
-                    PolynomialRegression_label.Text = algorithmObj.PolynomialRegressionPediction().ToString();
+
+                    PolynomialRegression_label.Text = Math.Round(algorithmObj.PolynomialRegressionPediction(), 3).ToString();
+                    MultipleLinearRegression_label.Text = Math.Round(algorithmObj.MultipleLinearRegressionPrediction(), 3).ToString();
+                    SupportVectorMachine_label.Text = algorithmObj.SupportVectorMachinePrediction().ToString();
+
+                    PreviousValues_label.Text = $"Previous values:  {delay}     {jitter}     {drops}";
+                    PreviousValues_label.Visible = true;
                 }
 
                 Delay_textBox.Clear();
@@ -67,18 +100,6 @@ namespace IPTV_Qality_Prediction
             {
                 MessageBox.Show("Please, choose file with learning data", "OOOPS!(", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
-            }
-        }
-
-        public WMPLib.WindowsMediaPlayer WMP = new WMPLib.WindowsMediaPlayer();
-
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBox1.Checked == true)
-            {
-                WMP.URL = @"song.mp3";
-                WMP.controls.play();
-                WMP.close();
             }
         }
     }

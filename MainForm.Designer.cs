@@ -378,4 +378,3 @@
         private System.Windows.Forms.Label LearningInfo_label;
     }
 }
-
