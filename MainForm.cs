@@ -102,5 +102,10 @@ namespace IPTV_Qality_Prediction
                     MessageBoxIcon.Warning);
             }
         }
+
+        private void Plot_button_Click(object sender, EventArgs e)
+        {
+            Plot_form form = new Plot_form();
+        }
     }
 }

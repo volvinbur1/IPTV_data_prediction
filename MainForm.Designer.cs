@@ -40,6 +40,7 @@
             this.Jitter_textBox = new System.Windows.Forms.TextBox();
             this.Drops_textBox = new System.Windows.Forms.TextBox();
             this.PredictionElem_groupBox = new System.Windows.Forms.GroupBox();
+            this.PreviousValues_label = new System.Windows.Forms.Label();
             this.ErrorMLR_label = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.MultipleLinearRegression_label = new System.Windows.Forms.Label();
@@ -51,8 +52,8 @@
             this.SupportVectorMachine_label = new System.Windows.Forms.Label();
             this.label155 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.PreviousValues_label = new System.Windows.Forms.Label();
             this.LearningInfo_label = new System.Windows.Forms.Label();
+            this.Plot_button = new System.Windows.Forms.Button();
             this.PredictionElem_groupBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -156,6 +157,7 @@
             // 
             // PredictionElem_groupBox
             // 
+            this.PredictionElem_groupBox.Controls.Add(this.Plot_button);
             this.PredictionElem_groupBox.Controls.Add(this.PreviousValues_label);
             this.PredictionElem_groupBox.Controls.Add(this.ErrorMLR_label);
             this.PredictionElem_groupBox.Controls.Add(this.label9);
@@ -185,6 +187,17 @@
             this.PredictionElem_groupBox.TabIndex = 10;
             this.PredictionElem_groupBox.TabStop = false;
             this.PredictionElem_groupBox.Text = "Prediction";
+            // 
+            // PreviousValues_label
+            // 
+            this.PreviousValues_label.AutoSize = true;
+            this.PreviousValues_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.PreviousValues_label.Location = new System.Drawing.Point(10, 69);
+            this.PreviousValues_label.Name = "PreviousValues_label";
+            this.PreviousValues_label.Size = new System.Drawing.Size(82, 13);
+            this.PreviousValues_label.TabIndex = 20;
+            this.PreviousValues_label.Text = "Previous values";
+            this.PreviousValues_label.Visible = false;
             // 
             // ErrorMLR_label
             // 
@@ -309,17 +322,6 @@
             this.label6.Text = "Polynomial Regression";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // PreviousValues_label
-            // 
-            this.PreviousValues_label.AutoSize = true;
-            this.PreviousValues_label.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.PreviousValues_label.Location = new System.Drawing.Point(10, 69);
-            this.PreviousValues_label.Name = "PreviousValues_label";
-            this.PreviousValues_label.Size = new System.Drawing.Size(82, 13);
-            this.PreviousValues_label.TabIndex = 20;
-            this.PreviousValues_label.Text = "Previous values";
-            this.PreviousValues_label.Visible = false;
-            // 
             // LearningInfo_label
             // 
             this.LearningInfo_label.AutoSize = true;
@@ -331,6 +333,17 @@
             this.LearningInfo_label.TabIndex = 11;
             this.LearningInfo_label.Text = "Algorithm\r\nis not\r\nlearned";
             this.LearningInfo_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // Plot_button
+            // 
+            this.Plot_button.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.Plot_button.Location = new System.Drawing.Point(277, 87);
+            this.Plot_button.Name = "Plot_button";
+            this.Plot_button.Size = new System.Drawing.Size(57, 23);
+            this.Plot_button.TabIndex = 12;
+            this.Plot_button.Text = "Plot";
+            this.Plot_button.UseVisualStyleBackColor = true;
+            this.Plot_button.Click += new System.EventHandler(this.Plot_button_Click);
             // 
             // MainForm
             // 
@@ -376,5 +389,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label PreviousValues_label;
         private System.Windows.Forms.Label LearningInfo_label;
+        private System.Windows.Forms.Button Plot_button;
     }
 }
+
