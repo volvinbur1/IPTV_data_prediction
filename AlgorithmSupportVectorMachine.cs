@@ -54,6 +54,11 @@ namespace IPTV_Qality_Prediction
 
             int[] prediction = machine.Decide(input);
 
+            PredictedData[2] = new double[prediction.Length];
+
+            for (int i = 0; i < prediction.Length; i++)
+                PredictedData[2][i] = Convert.ToDouble(prediction[i]);
+
             ErrorSVM = new ZeroOneLoss(output).Loss(prediction);
         }
 

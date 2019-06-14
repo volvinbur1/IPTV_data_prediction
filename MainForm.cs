@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Security;
 using System.Windows.Forms;
+using IP_TV;
 
 namespace IPTV_Qality_Prediction
 {
@@ -105,7 +106,8 @@ namespace IPTV_Qality_Prediction
 
         private void Plot_button_Click(object sender, EventArgs e)
         {
-            Plot_form form = new Plot_form();
+            Plot form = new Plot(algorithmObj);
+            form.Show();
         }
     }
 }
