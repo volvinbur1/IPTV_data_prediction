@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Security;
 using System.Windows.Forms;
+using IP_TV;
 
 namespace IPTV_Qality_Prediction
 {
@@ -101,6 +102,12 @@ namespace IPTV_Qality_Prediction
                 MessageBox.Show("Please, choose file with learning data", "OOOPS!(", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
             }
+        }
+
+        private void Plot_button_Click(object sender, EventArgs e)
+        {
+            Plot form = new Plot(algorithmObj);
+            form.Show();
         }
     }
 }

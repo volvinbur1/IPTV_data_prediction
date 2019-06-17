@@ -9,7 +9,8 @@ namespace IPTV_Qality_Prediction
 {
     public partial class Algorithm
     {
-        private double[][] LearningData;
+        internal double[][] LearningData;
+        internal double[][] PredictedData = new double[3][];
         private double errorPR = 0;
         private double delay;
         private double jitter;
@@ -56,6 +57,8 @@ namespace IPTV_Qality_Prediction
 
             double[] prediction = objRegressionLocal.Transform(independentVariables);
 
+            PredictedData[0] = prediction;
+
             errorPR += new SquareLoss(independentVariables).Loss(prediction);
 
             return objRegressionLocal;
@@ -95,6 +98,9 @@ namespace IPTV_Qality_Prediction
 
             multipleLinearRegressionObj = MultipleLinearRegression.FromData(independentVariables, dependentVariables);
             double[] prediction = multipleLinearRegressionObj.Transform(independentVariables);
+
+            PredictedData[1] = prediction;
+
             ErrorMLR = new SquareLoss(dependentVariables).Loss(prediction);
         }
     }
