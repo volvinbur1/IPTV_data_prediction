@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Security;
 using System.Windows.Forms;
-using IP_TV;
 
 namespace IPTV_Qality_Prediction
 {
@@ -17,6 +16,7 @@ namespace IPTV_Qality_Prediction
 
         private void AnalyzDataFileOpen_button_Click(object sender, EventArgs e)
         {
+            UseWaitCursor = true;
             string path;
 
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -29,7 +29,6 @@ namespace IPTV_Qality_Prediction
                 try
                 {
                     path = openFileDialog.FileName;
-                    UseWaitCursor = true;
                     algorithmObj = new Algorithm(WorkWithLearningData.ReadFromFile(path));
 
                     algorithmObj.LearningDataNormalization();
@@ -47,25 +46,22 @@ namespace IPTV_Qality_Prediction
 
                     PredictionElem_groupBox.Enabled = true;
                     AnalyzDataFileOpen_button.Enabled = false;
-
-                    UseWaitCursor = false;
                 }
                 catch (SecurityException)
                 {
-                    UseWaitCursor = false;
                     MessageBox.Show("You have not enought permision");
                 }
                 catch (FormatException)
                 {
-                    UseWaitCursor = false;
                     MessageBox.Show("Inappropriate learning data");
                 }
                 catch (Exception exception)
                 {
-                    UseWaitCursor = false;
                     MessageBox.Show(exception.Message);
                 }
             }
+
+            UseWaitCursor = false;
         }
 
         private void Analyze_button_Click(object sender, EventArgs e)
@@ -106,7 +102,7 @@ namespace IPTV_Qality_Prediction
 
         private void Plot_button_Click(object sender, EventArgs e)
         {
-            Plot form = new Plot(algorithmObj);
+            Plot_form form = new Plot_form(algorithmObj);
             form.Show();
         }
     }

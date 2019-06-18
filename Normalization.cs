@@ -6,6 +6,7 @@ namespace IPTV_Qality_Prediction
     {
         public double Delay
         {
+            private get => Delay;
             set
             {
                 double minValue = Minimum(LearningData.GetColumn(0));
@@ -16,6 +17,7 @@ namespace IPTV_Qality_Prediction
         }
         public double Jitter
         {
+            private get => Jitter;
             set
             {
                 double minValue = Minimum(LearningData.GetColumn(1));
@@ -26,6 +28,7 @@ namespace IPTV_Qality_Prediction
         }
         public double Drops
         {
+            private get => Drops;
             set
             {
                 double minValue = Minimum(LearningData.GetColumn(2));
